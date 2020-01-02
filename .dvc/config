@@ -1,0 +1,4 @@
+['remote "models"']
+url = ssh://osxboxes@192.168.1.107:/home/osxboxes/dvc-test-storage/models
+['remote "datasets"']
+url = ssh://osxboxes@192.168.1.107:/home/osxboxes/dvc-test-storage/datasets

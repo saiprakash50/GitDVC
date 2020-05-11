@@ -1,0 +1,22 @@
+#!/bin/bash
+# sets up dvc, sets up the wrapper
+
+command_name='myegit'
+echo "sets up command $command_name and other dependencies in /usr/bin/"
+sudo cp $command_name /usr/bin/
+chmod 777 /usr/bin/$command_name
+
+sudo wget https://dvc.org/deb/dvc.list -O /etc/apt/sources.list.d/dvc.list  
+sudo apt-get update  
+sudo apt-get install dvc
+
+mkdir datasets models experiments tests
+
+echo '# ' $(basename $PWD) > README.md
+clear
+GREEN='\033[0;32m'
+echo -e ${GREEN}
+cat logo
+
+echo -e "run myegit --help to learn more!"
+

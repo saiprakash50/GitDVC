@@ -1,0 +1,63 @@
+#!/bin/bash
+command_name=myegit
+server_ssh=myelin@192.168.1.150:/home/myelin/dvc-test-storage
+
+while test $# -gt 0; do
+  case "$1" in
+    -h|--help)
+      echo "options:"
+      echo "-h, --help                show brief help"
+      echo "--init                    initialize data version control"
+      echo "--add                     add progress to staging area"
+      echo "--commit "message"        add commit message and commit change"
+      echo "--pull                    pull repository updates"
+      echo "--push                    push commited changes"
+      echo "--checkout "branch name"  checkout to a new branch"
+      echo "--metrics                 compare metrics between experiments" 
+      exit 0
+      ;;
+    --init)
+      dvc init
+      dvc remote add models ssh://$server_ssh/models
+      dvc remote add datasets ssh://$server_ssh/datasets
+      git add .dvc/*
+      git commit -m "initialised dvc"
+      break
+      ;;
+    --add)
+      dvc add ./datasets/*
+      dvc add ./models/*
+      git add ./datasets/.gitignore
+      git add ./models/.gitignore
+      git add *
+      break
+      ;;
+    --pull)
+      git pull
+      dvc pull -r models
+      break
+      ;;
+    --commit)
+      shift
+      git commit -m $1
+      break
+      ;;
+    --push)
+      echo '# ' $(basename $PWD) > README.md
+      echo '## models'
+      for i in ./models/*.dvc; do
+          echo '[$i](models/$i)'
+      done
+      echo '## datasets'
+      for i in ./datasets/*.dvc; do
+          echo '[$i](datasets/$i)'
+      done
+      git add README.md
+      git commit -m "update README.md"
+      git push
+      dvc push -r datasets ./datasets/*
+      dvc push -r models ./models/*
+      break
+      ;;
+  esac
+done
